@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MultiLanguageApp</string>
+    <string name="welcome_txt">Welcome to CodingSTUFF</string>
+    <string name="submit_txt">Submit</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+
+
+    <string name="english" translatable="false">English</string>
+    <string name="hindi" translatable="false">Hindi</string>
+    <string name="marathi" translatable="false">Marathi</string>
+
+
+</resources>
