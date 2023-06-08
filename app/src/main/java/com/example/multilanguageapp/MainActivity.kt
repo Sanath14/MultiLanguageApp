@@ -1,19 +1,14 @@
 package com.example.multilanguageapp
 
 import android.content.Context
-import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.multilanguageapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelectionListener {
 
@@ -24,23 +19,16 @@ class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelec
     private lateinit var settingsManager: SettingsManager
 
     override fun attachBaseContext(newBase: Context?) {
-        if (newBase != null) {
+
+        newBase?.let { context ->
             settingsManager = SettingsManager(newBase.applicationContext)
-        }
-        var appLanguage: AppLanguage
-        var context: Context? = newBase
-
-        lifecycleScope.launch(Dispatchers.Main) {
-
-            appLanguage = settingsManager.getPreferredLanguage.first()
+            val appLanguage = settingsManager.currentLanguage
             selectedLang = appLanguage.selectedLang
             selectedLangCode = appLanguage.selectedLangCode
-            context =
-                newBase?.let { LanguageConfig.changeLanguage(it, appLanguage.selectedLangCode) }
-
+            LanguageConfig.changeLanguage(context, appLanguage.selectedLangCode)
         }
+        super.attachBaseContext(newBase)
 
-        super.attachBaseContext(context)
     }
 
 
@@ -61,6 +49,24 @@ class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelec
                 dialogFragment.show(supportFragmentManager, ChangeLangDialogFragment.TAG)
             }
         }
+
+        binding.nextIv.setOnClickListener {
+            startActivity(Intent(this , ItemActivity::class.java))
+        }
+
+        observeLanguageChanges()
+    }
+
+    private fun observeLanguageChanges() {
+        lifecycleScope.launch {
+            settingsManager.observeLanguageChanges()
+                .collect {
+                    // Apply the language change here
+
+                    if (selectedLangCode != it.selectedLangCode)
+                        restartActivity()
+                }
+        }
     }
 
     override fun onLanguageChanged(selectedLang: String, selectedLangCode: String) {
@@ -69,25 +75,22 @@ class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelec
 
         if (this.selectedLangCode != selectedLangCode) {
 
-//            GlobalScope.launch {
-//                settingsManager.savePreferredLanguage(AppLanguage(selectedLang, selectedLangCode))
-//
-//            }
-            restartActivity()
+            lifecycleScope.launch {
+
+                settingsManager.savePreferredLanguage(AppLanguage(selectedLang, selectedLangCode))
+
+            }
+
         }
 
     }
 
     private fun restartActivity() {
 
-
-        //   lifecycleScope.launch {
-        // delay(1500)
-
+        startActivity(Intent(this, MainActivity::class.java))
+        overridePendingTransition(0, 0)
         finish()
         overridePendingTransition(0, 0)
-        startActivity(intent)
-        overridePendingTransition(0, 0)
-        // }
+
     }
 }

@@ -3,4 +3,8 @@
     <string name="app_name">MultiLanguageApp</string>
     <string name="welcome_txt">कोडिंगस्टफ में आपका स्वागत है</string>
     <string name="submit_txt">सबमिट</string>
+
+    <string name="change_language">भाषा बदलो</string>
+    <string name="apple">सेब</string>
+
 </resources>

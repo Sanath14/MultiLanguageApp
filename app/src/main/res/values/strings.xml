@@ -9,6 +9,8 @@
     <string name="english" translatable="false">English</string>
     <string name="hindi" translatable="false">Hindi</string>
     <string name="marathi" translatable="false">Marathi</string>
+    <string name="change_language">Change Language</string>
+    <string name="apple">Apple</string>
 
 
 </resources>
