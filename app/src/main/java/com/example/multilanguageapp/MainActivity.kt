@@ -3,11 +3,9 @@ package com.example.multilanguageapp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.multilanguageapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelectionListener {
@@ -61,7 +59,6 @@ class MainActivity : AppCompatActivity(), ChangeLangDialogFragment.LanguageSelec
         lifecycleScope.launch {
             settingsManager.observeLanguageChanges()
                 .collect {
-                    // Apply the language change here
 
                     if (selectedLangCode != it.selectedLangCode)
                         restartActivity()
